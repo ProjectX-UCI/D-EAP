@@ -17,6 +17,16 @@ class _Regularizer(object):
     def regularized_all_param(self, reg_loss_function):
         raise NotImplementedError
 
+class NullRegularizer(_Regularizer):
+    def __init__(self, model, lambda_reg=0.01):
+        super(L1Regularizer, self).__init__(model=model)
+        self.lambda_reg = lambda_reg
+
+    def regularized_param(self, param_weights, reg_loss_function):
+        return reg_loss_function
+
+    def regularized_all_param(self, reg_loss_function):
+        return reg_loss_function
 
 class L1Regularizer(_Regularizer):
     """

@@ -1,7 +1,9 @@
 import torch.optim as optim
 import torch.nn as nn
 
-import time
+import time, sys
+
+sys.path.append('../')
 
 criterion = nn.CrossEntropyLoss()
 def package_model_components(model_class,list_of_regularizers):

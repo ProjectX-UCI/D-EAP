@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = 'maoss2'
 
-
 class _Regularizer(object):
     """
     Parent class of Regularizers
@@ -181,3 +180,4 @@ class GroupLassoRegularizer(_Regularizer):
     @staticmethod
     def __bias_groups_reg(bias_weights):
         return GroupLassoRegularizer.__grouplasso_reg(groups=bias_weights, dim=-1)  # ou 0 i dont know yet
+    

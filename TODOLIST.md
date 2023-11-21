@@ -9,7 +9,7 @@ IN-PROGRESS:
 
 NOT STARRTED:
 - Energy evaluation framework
-- FLOPS/memory measurement module
-- Sparsifying loss function
+-- FLOPS/memory measurement module
+-- Sparsifying loss function
 - D-EAP loss function
 - inference module (for measuring accuracy, latency and memory usage)

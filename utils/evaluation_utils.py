@@ -1,13 +1,13 @@
-def imshow(img):
-    img = img / 2 + 0.5     # unnormalize
-    npimg = img.numpy()
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# get some random training images
-dataiter = iter(trainloader)
-images, labels = next(dataiter)
+def plotDF(df,columns,title,ylabel,plot_figure=False,save_figure=False):
+    df = pd.DataFrame(df, columns=columns)
+    plot = df.plot(title=title)
+    plot.set(xlabel="Time/Iteration", ylabel=ylabel)
 
-# show images
-imshow(torchvision.utils.make_grid(images))
-# print labels
-print(' '.join('%5s' % classes[labels[j]] for j in range(4)))
+    if plot_figure:
+        plt.show()
+    
+    if save_figure:
+        plt.savefig("./results/%s.jpg"%title)

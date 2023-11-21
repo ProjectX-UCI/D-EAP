@@ -6,8 +6,8 @@ import time, sys
 sys.path.append('../')
 
 criterion = nn.CrossEntropyLoss()
-def package_model_components(model_class,list_of_regularizers):
 
+def package_model_components(model_class,list_of_regularizers):
     model_components = []
 
     for regularizer in list_of_regularizers:
@@ -25,8 +25,11 @@ def package_model_components(model_class,list_of_regularizers):
     
     return model_components
 
-def training_loop(optimizer,inputs,labels,model,regularizer_loss=None) -> "loss":
-    # get the inputs
+def training_loop(model_package,inputs,labels) -> "loss":
+    model = model_package["model"]
+    regularizer = model_package["regularizer"]
+    optimizer = model_package["optimizer"]
+
     # zero the parameter gradients
     optimizer.zero_grad()
 
@@ -35,7 +38,7 @@ def training_loop(optimizer,inputs,labels,model,regularizer_loss=None) -> "loss"
     loss = criterion(outputs, labels)
 
     # REGULARIZATION
-    loss = regularizer_loss.regularized_all_param(reg_loss_function=loss)
+    loss = regularizer.regularized_all_param(reg_loss_function=loss)
 
     loss.backward()
     optimizer.step()
@@ -47,11 +50,11 @@ def calculate_regularizer_metrics(model_components,inputs,labels):
     loss_across_regularizers = []
     latency_across_regularizers = []
 
-    for regularizer_index,regularizer in enumerate(model_components):
+    for model_package in model_components:
         
         #time each training loop to get latency
         start = time.time()
-        loss = training_loop(inputs,labels,regularizer)
+        loss = training_loop(model_package,inputs,labels)
         end = time.time()
 
         loss_across_regularizers.append(loss.item())

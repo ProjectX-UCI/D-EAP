@@ -19,7 +19,7 @@ class _Regularizer(object):
 
 class NullRegularizer(_Regularizer):
     def __init__(self, model, lambda_reg=0.01):
-        super(L1Regularizer, self).__init__(model=model)
+        super().__init__(model=model)
         self.lambda_reg = lambda_reg
 
     def regularized_param(self, param_weights, reg_loss_function):

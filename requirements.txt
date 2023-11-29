@@ -1,0 +1,7 @@
+memory-profiler
+torch
+torchvision
+matplotlib
+numpy
+pickle
+scikit-learn

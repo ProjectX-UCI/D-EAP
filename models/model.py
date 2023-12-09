@@ -19,3 +19,11 @@ class Net(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
+    
+class Test(nn.Module):
+    def __init__(self):
+        super(Test, self).__init__()
+        self.fc = nn.Linear(10,1)
+
+    def forward(self, x):
+        return self.fc(x)

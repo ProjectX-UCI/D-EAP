@@ -1,6 +1,6 @@
 import torch.optim as optim
 import torch.nn as nn
-
+import torch, os
 import time, sys
 
 sys.path.append('../')
@@ -14,7 +14,7 @@ def package_model_components(model_class,list_of_regularizers):
         model = model_class()
         compiled_regularizer = regularizer(model=model, lambda_reg=10**-2)
         optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
-
+        
         model_component = {
             "model":model,
             "regularizer":compiled_regularizer,
@@ -54,7 +54,12 @@ def calculate_regularizer_metrics(model_components,inputs,labels):
         
         #time each training loop to get latency
         start = time.time()
+        PATH = f"./models/{model_package['regularizer']}.pt"
+        if os.path.exists(PATH):
+            print("Loading model from disk")
+            model_package["model"].load_state_dict(torch.load(PATH))
         loss = training_loop(model_package,inputs,labels)
+        torch.save(model_package["model"].state_dict(), PATH)
         end = time.time()
 
         loss_across_regularizers.append(loss.item())

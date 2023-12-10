@@ -54,12 +54,9 @@ def calculate_regularizer_metrics(model_components,inputs,labels):
         
         #time each training loop to get latency
         start = time.time()
-        PATH = f"./models/{model_package['regularizer']}.pt"
-        if os.path.exists(PATH):
-            print("Loading model from disk")
-            model_package["model"].load_state_dict(torch.load(PATH))
+        model_path = f"./models/{model_package['regularizer']}.pt"
         loss = training_loop(model_package,inputs,labels)
-        torch.save(model_package["model"].state_dict(), PATH)
+        torch.save(model_package["model"].state_dict(), model_path)
         end = time.time()
 
         loss_across_regularizers.append(loss.item())

@@ -1,15 +1,12 @@
 # RESOLVES CONFUSING ERROR
-import os
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
-
+import os, torch
 from regularizers.regularizer import *
 from utils.data_utils import load_data
 from utils.training_utils import calculate_regularizer_metrics,package_model_components
-from models.model import Net
-from utils.evaluation_utils import plotDF
+from model import Net
+from utils.evaluation_utils import plotDF, Evaluator
 
-# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-# print(device)
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 if __name__ == '__main__':
     print("= [Loading data]")
@@ -27,7 +24,7 @@ if __name__ == '__main__':
 
     for epoch in range(1):  # loop over the dataset multiple times
 
-        print(' == [Epoch: %s]' % epoch)
+        print('== [Epoch: %s]' % epoch)
 
         for i, (inputs,labels) in enumerate(trainloader, 0):
             # limit training time for debugging purposes
@@ -42,7 +39,14 @@ if __name__ == '__main__':
             # calculate_FLOPS()
 
     # INFERENCE MODULE
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    for model in model_components:
+        model_path = f'./models/{model["regularizer"]}.pt'
+        inference_evaluator = Evaluator(model['model'], model_path, testloader, device)
 
+        print(inference_evaluator.evaluate())
+        print(inference_evaluator.latency())
+        inference_evaluator.memory_usage()
     print('= [Visualizing Results]')
 
     # print("loss_across_epochs",loss_across_epochs)

@@ -16,8 +16,11 @@ def plotDF(df,columns,title,ylabel,plot_figure=False,save_figure=False):
         plt.savefig("./results/%s.jpg"%title)
 
 class Evaluator:
-    def __init__(self, model, data_loader, device):
+    def __init__(self, model, model_path, data_loader, device='cpu'):
         self.model = model
+        self.model.load_state_dict(torch.load(model_path))
+        self.model.eval()
+
         self.data_loader = data_loader
         self.device = device
 
@@ -26,7 +29,6 @@ class Evaluator:
         mode: "Validation" or "Test"
         Evaluator.evaluate() returns the accuracy of the model
         '''
-        self.model.eval()
         correct = 0
         total = 0
         with torch.no_grad():
@@ -45,7 +47,6 @@ class Evaluator:
         num_iterations: number of iterations to run inference on
         Evaluator.latency() returns the average latency of the model
         '''
-        self.model.eval()
         start_time = time.time()
         for i, (inputs, _) in enumerate(self.data_loader):
             if i >= num_iterations:
@@ -61,7 +62,6 @@ class Evaluator:
     def memory_usage(self) -> None:
         # initialize evaluation Object in main and run
         # python -m memory_profiler main_experiment.py
-        self.model.eval()
         for inputs, _ in self.data_loader:
             inputs = inputs.to(self.device)
             with torch.no_grad():

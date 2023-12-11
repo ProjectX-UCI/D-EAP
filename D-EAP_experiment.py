@@ -18,7 +18,7 @@ if __name__ == '__main__':
     model_components = package_model_components(Test,list_of_regularizers)
     model_package = model_components[0]
     
-    inputs = torch.tensor([1,2],dtype=torch.float32)
+    inputs = torch.tensor([0,0,0,0,0,0,0,0,0,2],dtype=torch.float32)
     labels = torch.tensor([1],dtype=torch.float32)
 
     loss = training_loop(model_package,inputs,labels)

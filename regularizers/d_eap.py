@@ -50,16 +50,14 @@ class D_EAP(_Regularizer):
         # just declare as -1/2, no tensor
         coefficient = torch.tensor(-1/2,dtype=torch.float32)
 
-        b = torch.exp(coefficient*torch.pow(node_params/sigma,2))
+        p = 2
+
+        b = torch.exp(coefficient*torch.pow(node_params/sigma,p))
         print(b)
 
         # 3. sum together transformed parameters
         c = b.sum()
         print(c)
-
-        # 4. length - sum
-        # d = node_params.size() - c
-        # print(d)
 
         return c
 

@@ -38,6 +38,7 @@ def training_loop(model_package,inputs,labels) -> "loss":
     loss = criterion(outputs, labels)
 
     # REGULARIZATION
+    # add regularization term outside
     loss = regularizer.regularized_all_param(reg_loss_function=loss)
 
     loss.backward()

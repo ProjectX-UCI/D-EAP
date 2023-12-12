@@ -9,6 +9,7 @@ from model import Net
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 def main(lambda_reg,test_label):
+
     # assemble regularizer functions to be compared as array
     regularizer_funcs = [Regularizers.none,Regularizers.l1,Regularizers.l2,Regularizers.static_l0]
     regularizer_labels = ["None","L1","L2","Static L0"]
@@ -22,28 +23,26 @@ def main(lambda_reg,test_label):
     loss_output = []
 
     print('= [Training]')
-    for epoch in range(1):
+    for epoch in range(2):
 
         print('== [Epoch: %s]' % epoch)
 
         for i, (inputs,labels) in enumerate(trainloader, 0):
-            loss_output_for_epoch = []
 
             # limit training time for debugging purposes
             if i > 5:
                 break
-            
+
+            loss_output_for_epoch = []
             # iterate through all regularizer functions
             for model_package in model_components:
 
                 # run a single training loop
                 loss = training_loop(model_package,lambda_reg,inputs,labels)
-                loss_output_for_epoch.append(loss)
-            
-            print(i)
 
-            # eventually, move outside loop (datum -> epoch)
-            loss_output.append(loss_output_for_epoch)
+                loss_output_for_epoch.append(loss)
+        
+        loss_output.append(loss_output_for_epoch)
 
     # create folder to store loss and model parameters for particular training run
     create_folder(folder_path)
@@ -62,17 +61,18 @@ def main(lambda_reg,test_label):
 if __name__ == '__main__':
 
     if len(sys.argv) != 3:
-        print("Usage: python train_models.py <lambda_reg>")
+        print("Usage: python train_models.py <test label> <lambda reg>")
         raise SyntaxError
     else:
+        test_label = sys.argv[1]
+
         # get lambda_reg from arguments
         try:
-            lambda_reg = float(sys.argv[1])
+            lambda_reg = float(sys.argv[2])
         except:
             raise TypeError
-        test_label = sys.argv[2]
     
-    # create folder to store files for this particular training run
+    # if folder already exists, break
     folder_path = f"./models/{test_label}"
     if check_folder_exists(folder_path):
         raise FileExistsError

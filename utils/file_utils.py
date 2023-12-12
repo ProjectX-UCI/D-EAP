@@ -26,6 +26,10 @@ def create_folder(folder_path):
     else:
         print(f"Folder '{folder_path}' already exists.")
 
+def find_files_with_extension(folder_path, extension):
+    for _, _, files in os.walk(folder_path):
+        return [file for file in files if file.endswith(extension)]
+
 def store_csv(data,columns,path):
     # Create a 2D dataframe
     df = pd.DataFrame(data, columns=columns)

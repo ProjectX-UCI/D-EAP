@@ -7,10 +7,10 @@ sys.path.append('../')
 
 criterion = nn.CrossEntropyLoss()
 
-def package_model_components(model_class,list_of_regularizers):
+def package_model_components(model_class,list_of_regularizers,labels):
     model_components = []
 
-    for regularizer in list_of_regularizers:
+    for regularizer,label in zip(list_of_regularizers,labels):
         model = model_class()
         compiled_regularizer = regularizer(model=model, lambda_reg=10**-2)
         optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
@@ -18,7 +18,8 @@ def package_model_components(model_class,list_of_regularizers):
         model_component = {
             "model":model,
             "regularizer":compiled_regularizer,
-            "optimizer":optimizer
+            "optimizer":optimizer,
+            "label":label
         }
 
         model_components.append(model_component)
@@ -45,6 +46,7 @@ def training_loop(model_package,inputs,labels) -> "loss":
 
     return loss
 
+# deprecated
 def calculate_regularizer_metrics(model_components,inputs,labels):
 
     loss_across_regularizers = []
@@ -56,7 +58,7 @@ def calculate_regularizer_metrics(model_components,inputs,labels):
         start = time.time()
         model_path = f"./models/{model_package['regularizer']}.pt"
         loss = training_loop(model_package,inputs,labels)
-        torch.save(model_package["model"].state_dict(), model_path)
+        # torch.save(model_package["model"].state_dict(), model_path)
         end = time.time()
 
         loss_across_regularizers.append(loss.item())

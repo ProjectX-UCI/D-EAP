@@ -4,6 +4,8 @@ from regularizers.functions import Regularizers
 from utils.data_utils import load_data
 from utils.training_utils import training_loop,package_model_components
 from model import Net
+import time
+
 
 # WHAT IS THIS FOR?
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
@@ -23,17 +25,21 @@ def main(lambda_reg,test_label):
     loss_output = []
 
     print('= [Training]')
-    for epoch in range(2):
+    for epoch in range(10):
 
         print('== [Epoch: %s]' % epoch)
+
+        # time epoch
+        start_time = time.time()
 
         for i, (inputs,labels) in enumerate(trainloader, 0):
 
             # limit training time for debugging purposes
-            if i > 5:
-                break
+            # if i > 5:
+            #     break
 
             loss_output_for_epoch = []
+
             # iterate through all regularizer functions
             for model_package in model_components:
 
@@ -43,6 +49,9 @@ def main(lambda_reg,test_label):
                 loss_output_for_epoch.append(loss)
         
         loss_output.append(loss_output_for_epoch)
+
+        end_time = time.time()
+        print(end_time - start_time)
 
     # create folder to store loss and model parameters for particular training run
     create_folder(folder_path)
@@ -76,5 +85,5 @@ if __name__ == '__main__':
     folder_path = f"./models/{test_label}"
     if check_folder_exists(folder_path):
         raise FileExistsError
-
+    
     main(lambda_reg,test_label)

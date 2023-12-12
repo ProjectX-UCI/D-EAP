@@ -1,15 +1,18 @@
 DONE:
 - results visualization
 - Refactor code into all .py
+- Baseline pipeline
+- Latency measurement module
+- D-EAP loss function
 
 IN-PROGRESS: 
-- Baseline pipeline
+- inference evaluation pipeline
+  - FLOPS/memory measurement module
+  - sparsity measurement module
+  - sparsity by node measurement module
+- dynamic l0 implementation
+- checkpoint results
+- README
 - Documentation
-- Latency measurement module
 
 NOT STARRTED:
-- Energy evaluation framework
--- FLOPS/memory measurement module
--- Sparsifying loss function
-- D-EAP loss function
-- inference module (for measuring accuracy, latency and memory usage)

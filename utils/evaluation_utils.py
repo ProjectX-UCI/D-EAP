@@ -24,39 +24,39 @@ class Evaluator:
         self.data_loader = data_loader
         self.device = device
 
-    def evaluate(self, mode = "Validation") -> str:
+    def evaluate(self, measure_latency = True) -> (float,float):
         '''
-        mode: "Validation" or "Test"
         Evaluator.evaluate() returns the accuracy of the model
         '''
         correct = 0
         total = 0
+
+        iterations = 0
+        latency = None
+
+        if measure_latency:
+            start_time = time.time()
+
         with torch.no_grad():
             for inputs, labels in self.data_loader:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
+
                 outputs = self.model(inputs)
+
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
-        accuracy = correct / total
-        return f'{mode} Accuracy: {accuracy * 100:.2f}%'
+                iterations += 1
 
-    def latency(self, num_iterations = 100) -> str:
-        '''
-        num_iterations: number of iterations to run inference on
-        Evaluator.latency() returns the average latency of the model
-        '''
-        start_time = time.time()
-        for i, (inputs, _) in enumerate(self.data_loader):
-            if i >= num_iterations:
-                break
-            inputs = inputs.to(self.device)
-            with torch.no_grad():
-                outputs = self.model(inputs)
-        end_time = time.time()
-        latency = (end_time - start_time) / num_iterations
-        return f'Average Latency: {latency * 1000:.2f} ms'
+        accuracy = correct / total
+
+        if measure_latency:
+            end_time = time.time()
+            latency = (end_time - start_time) / iterations
+            latency *= 1000
+        
+        return accuracy,latency
 
     @profile
     def memory_usage(self) -> None:

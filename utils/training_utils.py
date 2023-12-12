@@ -7,17 +7,17 @@ sys.path.append('../')
 
 criterion = nn.CrossEntropyLoss()
 
-def package_model_components(model_class,list_of_regularizers,labels):
+# move to model_utils/
+def package_model_components(model_class,regularizer_funcs,labels):
     model_components = []
 
-    for regularizer,label in zip(list_of_regularizers,labels):
+    for regularizer_func,label in zip(regularizer_funcs,labels):
         model = model_class()
-        compiled_regularizer = regularizer(model=model, lambda_reg=10**-2)
         optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
         
         model_component = {
             "model":model,
-            "regularizer":compiled_regularizer,
+            "regularizer_func":regularizer_func,
             "optimizer":optimizer,
             "label":label
         }
@@ -26,9 +26,9 @@ def package_model_components(model_class,list_of_regularizers,labels):
     
     return model_components
 
-def training_loop(model_package,inputs,labels) -> "loss":
+def training_loop(model_package,lambda_reg,inputs,labels) -> "loss":
     model = model_package["model"]
-    regularizer = model_package["regularizer"]
+    regularizer_func = model_package["regularizer_func"]
     optimizer = model_package["optimizer"]
 
     # zero the parameter gradients
@@ -36,32 +36,18 @@ def training_loop(model_package,inputs,labels) -> "loss":
 
     # forward + backward + optimize
     outputs = model(inputs)
-    loss = criterion(outputs, labels)
+    # loss = criterion(outputs, labels)
 
-    # REGULARIZATION
-    loss = regularizer.regularized_all_param(reg_loss_function=loss)
+    # # REGULARIZATION
+    # loss = regularizer.regularized_all_param(reg_loss_function=loss)
+
+    # calculate regularization values for all nodes
+    regularization_values = [regularizer_func(params) for type, params in model.named_parameters() if type.endswith('weight')]
+    
+    # calculate original loss + weighted regularization value
+    loss = criterion(outputs, labels) + lambda_reg * sum(regularization_values)
 
     loss.backward()
     optimizer.step()
 
     return loss
-
-# deprecated
-def calculate_regularizer_metrics(model_components,inputs,labels):
-
-    loss_across_regularizers = []
-    latency_across_regularizers = []
-
-    for model_package in model_components:
-        
-        #time each training loop to get latency
-        start = time.time()
-        model_path = f"./models/{model_package['regularizer']}.pt"
-        loss = training_loop(model_package,inputs,labels)
-        # torch.save(model_package["model"].state_dict(), model_path)
-        end = time.time()
-
-        loss_across_regularizers.append(loss.item())
-        latency_across_regularizers.append(end - start)
-
-    return loss_across_regularizers,latency_across_regularizers

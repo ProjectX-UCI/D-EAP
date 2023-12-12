@@ -50,4 +50,4 @@ def training_loop(model_package,lambda_reg,inputs,labels) -> "loss":
     loss.backward()
     optimizer.step()
 
-    return loss
+    return loss.item()

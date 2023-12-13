@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import torch
 import time
-from memory_profiler import profile
+# from memory_profiler import profile
 
 def plotDF(df,columns,title,ylabel,plot_figure=False,save_figure=False):
     df = pd.DataFrame(df, columns=columns)
@@ -41,9 +41,13 @@ class Evaluator:
             for inputs, labels in self.data_loader:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
 
+                # forward pass -> probability of predicting each class
                 outputs = self.model(inputs)
 
+                # gets index of highest probability in output vector
+                # index of highest probability = predicted label
                 _, predicted = torch.max(outputs.data, 1)
+                
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
@@ -58,11 +62,23 @@ class Evaluator:
         
         return accuracy,latency
 
-    @profile
-    def memory_usage(self) -> None:
-        # initialize evaluation Object in main and run
-        # python -m memory_profiler main_experiment.py
-        for inputs, _ in self.data_loader:
-            inputs = inputs.to(self.device)
-            with torch.no_grad():
-                outputs = self.model(inputs)
+    # @profile
+    # def memory_usage(self) -> None:
+    #     # initialize evaluation Object in main and run
+    #     # python -m memory_profiler main_experiment.py
+    #     for inputs, _ in self.data_loader:
+    #         inputs = inputs.to(self.device)
+    #         with torch.no_grad():
+    #             outputs = self.model(inputs)
+    
+    def sparsity(self, threshold = 10e-5) -> float:
+
+        # Count the total number of parameters
+        total_params = sum(p.numel() for p in self.model.parameters())
+
+        # Count the number of non-zero parameters
+        zero_params = sum(torch.sum(torch.abs(p) < threshold).item() for p in self.model.parameters())
+
+        # Calculate sparsity
+        sparsity = (zero_params / total_params)
+        return sparsity

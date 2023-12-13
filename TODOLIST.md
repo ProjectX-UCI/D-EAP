@@ -10,6 +10,7 @@ IN-PROGRESS:
   - FLOPS/memory measurement module
   - sparsity measurement module
   - sparsity by node measurement module
+  - plot (normalized) loss output matrix
 - dynamic l0 implementation
 - checkpoint results
 - README

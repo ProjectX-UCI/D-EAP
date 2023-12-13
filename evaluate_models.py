@@ -13,14 +13,19 @@ def main(folder_path):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # for all regularizers, evaluate accuracy, latency, memory and sparsity
-    for file_name in find_files_with_extension(folder_path,'.pt')[:1]:
+    for file_name in find_files_with_extension(folder_path,'.pt'):
         print(f"= [Evaluating Regularizer: {file_name.split('.pt')[0]}]")
 
         file_path = f"{folder_path}/{file_name}"
 
         inference_evaluator = Evaluator(Net(), file_path, testloader, device)
+        accuracy,latency = inference_evaluator.evaluate(measure_latency=True)
+        sparsity = inference_evaluator.sparsity()
 
-        print(inference_evaluator.evaluate())
+        print("accuracy",accuracy)
+        print("latency",latency)
+        print("sparsity",sparsity)
+
         # print(inference_evaluator.latency())
         # inference_evaluator.memory_usage()
 

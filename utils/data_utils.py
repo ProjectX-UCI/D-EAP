@@ -3,6 +3,11 @@ import torchvision
 import torchvision.transforms as transforms
 
 def load_data():
+    """Load CIFAR-10 dataset for model training and inference
+
+    Returns:
+        (torch.utils.data.dataloader.DataLoader,torch.utils.data.dataloader.DataLoader): dataloaders containing training and testing data respectively
+    """
     transform = transforms.Compose(
         [transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])

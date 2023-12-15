@@ -6,6 +6,11 @@ from model import Net
 from utils.data_utils import load_data
 
 def main(folder_path):
+    """Evaluates trained models stored in the given training context in terms of accuracy, latency and sparsity
+
+    Args:
+        folder_path (string): name of the folder inside ./models/ corresponding to the training context to be tested
+    """
 
     print("= [Loading data]")
     testloader,_ = load_data()

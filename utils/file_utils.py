@@ -27,6 +27,15 @@ def create_folder(folder_path):
         print(f"Folder '{folder_path}' already exists.")
 
 def find_files_with_extension(folder_path, extension):
+    """Get all file names in given directory with given file extension
+
+    Args:
+        folder_path (string): directory path to check
+        extension (string): file extension to filter files
+
+    Returns:
+        list(string): list of file names matching given criteria
+    """
     for _, _, files in os.walk(folder_path):
         return [file for file in files if file.endswith(extension)]
 

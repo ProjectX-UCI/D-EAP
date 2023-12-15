@@ -4,6 +4,14 @@ import torch
 sigma = .5
 
 class Regularizers():
+    """Class containing all regularization terms to be compared and measured in this study
+
+    Raises:
+        NotImplementedError: _description_
+
+    Returns:
+        torch.Tensor: regularization value for given parameter vector
+    """
 
     @staticmethod
     def none(var):
@@ -17,10 +25,17 @@ class Regularizers():
     def l2(var):
         return var.pow(2).sum()
 
-    # formalized in 3.1 of the paper
-    # f_sigma(s) = 1 - exp( -1/2 * (s/sigma)^2 ))
     @staticmethod
     def static_l0(var):
+        """Static l0 norm approximator, formalized in section 3.1 of our paper.
+        Formula: f_sigma(s) = 1 - exp( -1/2 * (s/sigma)^2 ))
+
+        Args:
+            var torch.Tensor: parameter vector
+
+        Returns:
+            torch.Tensor: regularization value for given parameter vector
+        """
 
         f_s = 1 - torch.exp((-1.0/2)*torch.pow(var/sigma,2))
         return f_s.sum()

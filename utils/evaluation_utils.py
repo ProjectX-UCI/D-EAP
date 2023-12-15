@@ -5,6 +5,16 @@ import time
 # from memory_profiler import profile
 
 def plotDF(df,columns,title,ylabel,plot_figure=False,save_figure=False):
+    """Plots dataframe containing loss values across time (epochs) for different regularizer-model packages
+
+    Args:
+        df (pd.dataframe)
+        columns (list(string))
+        title (string)
+        ylabel (string)
+        plot_figure (bool, optional): Defaults to False.
+        save_figure (bool, optional): Defaults to False.
+    """
     df = pd.DataFrame(df, columns=columns)
     plot = df.plot(title=title)
     plot.set(xlabel="Time/Iteration", ylabel=ylabel)
@@ -16,6 +26,9 @@ def plotDF(df,columns,title,ylabel,plot_figure=False,save_figure=False):
         plt.savefig("./results/%s.jpg"%title)
 
 class Evaluator:
+    """Class for evaluating regularizers in terms of various measurement benchmarks
+    """
+
     def __init__(self, model, model_path, data_loader, device='cpu'):
         self.model = model
         self.model.load_state_dict(torch.load(model_path))
@@ -25,9 +38,11 @@ class Evaluator:
         self.device = device
 
     def evaluate(self, measure_latency = True) -> (float,float):
-        '''
-        Evaluator.evaluate() returns the accuracy of the model
-        '''
+        """Measures accuracy and latency of a model at the time of inference
+
+        Returns:
+            (float,float): tuple containing accuracy and latency score respectively
+        """
         correct = 0
         total = 0
 
@@ -72,6 +87,14 @@ class Evaluator:
     #             outputs = self.model(inputs)
     
     def sparsity(self, threshold = 10e-5) -> float:
+        """Measures sparsity of a model, where sparsity is the number of parameters with magnitude coefficients below the given threshold value
+
+        Args:
+            threshold (float, optional): Threshold for determining whether a parameter is considered zero or non-zero. Defaults to 10e-5.
+
+        Returns:
+            float: sparsity score
+        """
 
         # Count the total number of parameters
         total_params = sum(p.numel() for p in self.model.parameters())

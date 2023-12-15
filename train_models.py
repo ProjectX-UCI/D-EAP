@@ -11,6 +11,12 @@ import time
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 def main(lambda_reg,test_label):
+    """Train models on four significant regularizers—the last of which is novel—on CIFAR-10 dataset and store model parameters in training context directory inside ./models/ folder
+
+    Args:
+        lambda_reg (float): modulation value to scale the impact of regularization terms
+        test_label (string): name of training context folder that will be created to store trained model parameters
+    """
 
     # assemble regularizer functions to be compared as array
     regularizer_funcs = [Regularizers.none,Regularizers.l1,Regularizers.l2,Regularizers.static_l0]

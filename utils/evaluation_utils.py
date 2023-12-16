@@ -25,6 +25,16 @@ def plotDF(df,columns,title,ylabel,plot_figure=False,save_figure=False):
     if save_figure:
         plt.savefig("./results/%s.jpg"%title)
 
+def getGPUMemoryUsage(gpuID=0):
+    COMMAND = f'nvidia-smi --query-gpu=memory.used --format=csv,noheader --id={gpuID}'
+    parse_output = lambda s: s.decode('ascii').split('\n')[:-1]
+    try:
+        memory_used  = parse_output(sp.check_output(COMMAND.split(),stderr=sp.STDOUT))
+    except sp.CalledProcessError as e:
+        print(f"Exception: {str(e.output)}")
+        return None
+    return [int(s.split()[0]) for s in memory_used]
+
 
 class Evaluator:
     """Class for evaluating regularizers in terms of various measurement benchmarks
@@ -76,6 +86,10 @@ class Evaluator:
             end_time = time.time()
             latency = (end_time - start_time) / iterations
             latency *= 1000
+        
+        if self.device == torch.device("cuda:0"):
+            gpu_memory_usage = getGPUMemoryUsage()
+            print("GPU Memory Usage: ", gpu_memory_usage)
         return accuracy, latency
 
     # @profile

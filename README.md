@@ -29,4 +29,4 @@ Undergraduate students at University of California, Irvine
 - Aparajita Bandopadhyay, Mathematics
 - Alex Wong, Computer Science
 - Souzen Khan, Computer Science
-- Azra Zahin, Data Science
+- Azra Zahin, Computer Science

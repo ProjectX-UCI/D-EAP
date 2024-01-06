@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import torch
-import time
+import torch, time
+import subprocess as sp
 # from memory_profiler import profile
 
 def plotDF(df,columns,title,ylabel,plot_figure=False,save_figure=False):
@@ -25,12 +25,24 @@ def plotDF(df,columns,title,ylabel,plot_figure=False,save_figure=False):
     if save_figure:
         plt.savefig("./results/%s.jpg"%title)
 
+def getGPUMemoryUsage(gpuID=0):
+    COMMAND = f'nvidia-smi --query-gpu=memory.used --format=csv,noheader --id={gpuID}'
+    parse_output = lambda s: s.decode('ascii').split('\n')[:-1]
+    try:
+        memory_used  = parse_output(sp.check_output(COMMAND.split(),stderr=sp.STDOUT))
+    except sp.CalledProcessError as e:
+        print(f"Exception: {str(e.output)}")
+        return None
+    return [int(s.split()[0]) for s in memory_used]
+
+
 class Evaluator:
     """Class for evaluating regularizers in terms of various measurement benchmarks
     """
 
     def __init__(self, model, model_path, data_loader, device='cpu'):
         self.model = model
+        self.model.to(device)
         self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
 
@@ -75,7 +87,10 @@ class Evaluator:
             latency = (end_time - start_time) / iterations
             latency *= 1000
         
-        return accuracy,latency
+        if self.device == torch.device("cuda:0"):
+            gpu_memory_usage = getGPUMemoryUsage()
+            print("GPU Memory Usage: ", gpu_memory_usage)
+        return accuracy, latency
 
     # @profile
     # def memory_usage(self) -> None:

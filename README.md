@@ -21,12 +21,3 @@ This project was created for [ProjectX's 2023 cycle](https://www.uoft.ai/project
   - test_label (string): name of training context folder that will be created to store trained model parameters
   - lambda_reg (float): modulation value to scale the impact of regularization terms
 2. EVALUATE MODELS "python ./evaluate_models <test_label>"
-
-### Credits
-
-Undergraduate students at University of California, Irvine
-- Redford Hudson, Data Science
-- Aparajita Bandopadhyay, Mathematics
-- Alex Wong, Computer Science
-- Souzen Khan, Computer Science
-- Azra Zahin, Computer Science
